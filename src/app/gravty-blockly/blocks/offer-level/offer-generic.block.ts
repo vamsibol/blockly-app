@@ -1,5 +1,5 @@
-import { CustomBlock } from 'src/app/gravty-blockly/ngx-blockly/models/custom-block';
 import * as Blockly from 'blockly/core';
+import { CustomBlock } from '../../ngx-blockly/models/custom-block';
 
 export class OfferGenericBlock extends CustomBlock {
   constructor() {

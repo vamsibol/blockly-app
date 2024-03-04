@@ -1,4 +1,4 @@
-import { CustomBlock } from 'src/app/gravty-blockly/ngx-blockly/models/custom-block';
+import { CustomBlock } from '../../ngx-blockly/models/custom-block';
 
 export class OrBlock extends CustomBlock {
   constructor() {

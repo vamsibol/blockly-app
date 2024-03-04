@@ -1,4 +1,5 @@
-import { Blockly, CustomBlock } from 'ngx-blockly';
+import { CustomBlock } from '../../ngx-blockly/models/custom-block';
+import * as Blockly from 'blockly/core';
 
 export class RuleBlock extends CustomBlock {
   constructor() {

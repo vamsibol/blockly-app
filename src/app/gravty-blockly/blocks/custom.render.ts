@@ -28,7 +28,9 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
     super();
     this.NOTCH_WIDTH = 0;
     this.NOTCH_HEIGHT = 0;
-    this.NOTCH_OFFSET_LEFT = 8;
+    this.NOTCH_OFFSET_LEFT = 0;
+    console.log(this.NOTCH_OFFSET_LEFT);
+
     this.BOTTOM_ROW_AFTER_STATEMENT_MIN_HEIGHT = 0;
   }
   override makeOutsideCorners(): OutsideCorners {
@@ -69,14 +71,16 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
 
   protected override makeNotch(): Notch {
     return {
-      ...super.makeNotch(),
       pathLeft: '',
       pathRight: '',
       width: 0,
+      type: 0,
+      height: 0,
     };
   }
 }
 
+// For Reeference: https://github.com/google/blockly/blob/develop/core/renderers/common/info.ts
 class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
   constructor(
     public renderer: Blockly.blockRendering.Renderer,
@@ -127,10 +131,12 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
   }
   override measure() {
     super.measure();
+    if (this.block.type == 'activity_criteria') return;
 
-    // Logic to 
+    // Logic to trim extra edges from the last row
     let currentRowWidth = 0;
-    for (let i = 0, row; (row = this.rows[i]); i++) {
+    for (let i = 0; i < this.rows.length; i++) {
+      const row = this.rows[i];
       if (row instanceof Blockly.blockRendering.InputRow) {
         const extraWidth = row.elements[row.elements.length - 1].width;
         row.width -= extraWidth;
