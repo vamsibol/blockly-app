@@ -1,6 +1,5 @@
 import {
   InsideCorners,
-  Notch,
   OutsideCorners,
 } from 'blockly/core/renderers/common/constants';
 import * as Blockly from 'blockly/core';
@@ -28,7 +27,7 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
     super();
     this.NOTCH_WIDTH = 0;
     this.NOTCH_HEIGHT = 0;
-    this.NOTCH_OFFSET_LEFT = 8;
+    this.NOTCH_OFFSET_LEFT = 7;
     this.MEDIUM_PADDING = 8;
     this.BOTTOM_ROW_AFTER_STATEMENT_MIN_HEIGHT = 0;
   }
@@ -156,5 +155,18 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
         row.elements[row.elements.length - 2].width = computedWidth;
       }
     }
+  }
+
+  protected override getSpacerRowHeight_(
+    _prev: Blockly.blockRendering.Row,
+    _next: Blockly.blockRendering.Row
+  ): number {
+    console.log('_prev', _prev);
+    console.log('_next', _next);
+
+    // if (this.block.type == 'activity_criteria') return 0;
+    if (_prev instanceof Blockly.blockRendering.TopRow) return 0;
+    if (_prev instanceof Blockly.blockRendering.TopRow) return 0;
+    return this.constants_.MEDIUM_PADDING;
   }
 }
