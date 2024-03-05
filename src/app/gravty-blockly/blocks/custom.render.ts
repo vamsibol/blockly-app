@@ -28,9 +28,8 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
     super();
     this.NOTCH_WIDTH = 0;
     this.NOTCH_HEIGHT = 0;
-    this.NOTCH_OFFSET_LEFT = 0;
-    console.log(this.NOTCH_OFFSET_LEFT);
-
+    this.NOTCH_OFFSET_LEFT = 8;
+    this.MEDIUM_PADDING = 8;
     this.BOTTOM_ROW_AFTER_STATEMENT_MIN_HEIGHT = 0;
   }
   override makeOutsideCorners(): OutsideCorners {
@@ -69,15 +68,15 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
     };
   }
 
-  protected override makeNotch(): Notch {
-    return {
-      pathLeft: '',
-      pathRight: '',
-      width: 0,
-      type: 0,
-      height: 0,
-    };
-  }
+  // protected override makeNotch(): Notch {
+  //   return {
+  //     pathLeft: '',
+  //     pathRight: '',
+  //     width: 0,
+  //     type: 0,
+  //     height: 0,
+  //   };
+  // }
 }
 
 // For Reeference: https://github.com/google/blockly/blob/develop/core/renderers/common/info.ts
@@ -89,10 +88,9 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
     super(renderer, block);
   }
 
-  protected override addElemSpacing_(): void {
+  protected override addElemSpacing_() {
     for (let i = 0, row; (row = this.rows[i]); i++) {
       const oldElems = row.elements;
-
       row.elements = [];
       // No spacing needed before the corner on the top row or the bottom row.
       if (row.startsWithElemSpacer()) {
@@ -107,19 +105,18 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
       if (!oldElems.length) {
         continue;
       }
-
       for (let e = 0; e < oldElems.length - 1; e++) {
-        if (i !== this.rows.length - 1) {
-          row.elements.push(oldElems[e]);
-        }
-        const spacing = this.getInRowSpacing_(oldElems[e], oldElems[e + 1]);
+        row.elements.push(oldElems[e]);
+        const spacing =
+          this.getInRowSpacing_(oldElems[e], oldElems[e + 1]) +
+          (row instanceof Blockly.blockRendering.BottomRow ? 0 : 8);
         row.elements.push(
-          new Blockly.blockRendering.InRowSpacer(this.constants_, spacing + 8)
+          new Blockly.blockRendering.InRowSpacer(this.constants_, spacing)
         );
       }
-
       row.elements.push(oldElems[oldElems.length - 1]);
       if (row.endsWithElemSpacer()) {
+        // There's a spacer after the last element in the row.
         row.elements.push(
           new Blockly.blockRendering.InRowSpacer(
             this.constants_,
@@ -129,24 +126,34 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
       }
     }
   }
+
   override measure() {
     super.measure();
     if (this.block.type == 'activity_criteria') return;
 
     // Logic to trim extra edges from the last row
-    let currentRowWidth = 0;
+    let rowWidth = 0;
     for (let i = 0; i < this.rows.length; i++) {
       const row = this.rows[i];
       if (row instanceof Blockly.blockRendering.InputRow) {
         const extraWidth = row.elements[row.elements.length - 1].width;
         row.width -= extraWidth;
-        currentRowWidth = row.width;
+        rowWidth = row.width;
       }
-      if (i == this.rows.length - 1) {
-        row.elements = [row.elements[0]];
-        row.elements.map((elem) => {
-          elem.width = currentRowWidth;
+
+      if (row instanceof Blockly.blockRendering.BottomRow) {
+        row.width = rowWidth;
+        const computedWidth = row.elements.reduce((acc, curr) => {
+          if (curr instanceof Blockly.blockRendering.InRowSpacer) {
+            return acc;
+          }
+          return acc - curr.width;
+        }, rowWidth);
+
+        row.elements.forEach((element) => {
+          element.width = 0;
         });
+        row.elements[row.elements.length - 2].width = computedWidth;
       }
     }
   }
