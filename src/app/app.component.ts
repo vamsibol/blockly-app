@@ -35,7 +35,6 @@ export class AppComponent {
       NgxBlocklyGenerator.PYTHON,
       NgxBlocklyGenerator.XML,
     ],
-    defaultBlocks: true,
     horizontalLayout: true,
     zoom: {
       controls: true,
@@ -50,6 +49,8 @@ export class AppComponent {
       scrollbars: true,
       wheel: true,
     },
+    collapse: true,
+    comments: true,
   };
 
   offerLevelBlocks: CustomBlock[] = [
@@ -76,7 +77,6 @@ export class AppComponent {
       ...this.offerLevelBlocks,
       ...this.ruleLevelBlocks,
     ]);
-    // this.config.rendererOverrides
   }
 
   ngAfterViewInit() {
