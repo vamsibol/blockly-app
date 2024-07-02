@@ -11,7 +11,6 @@ import { OrBlock } from './gravty-blockly/blocks/offer-level/or.block';
 import { Category } from './gravty-blockly/ngx-blockly/models/category';
 import { CustomBlock } from './gravty-blockly/ngx-blockly/models/custom-block';
 import { NgxBlocklyToolbox } from './gravty-blockly/ngx-blockly/plugins/ngx-blockly.toolbox';
-import './gravty-blockly/blocks/offer-level';
 import * as Blockly from 'blockly/core';
 import { createPlayground } from '@blockly/dev-tools';
 import { NgxBlocklyComponent } from './gravty-blockly/ngx-blockly/ngx-blockly.component';

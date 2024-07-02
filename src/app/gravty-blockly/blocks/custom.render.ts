@@ -66,16 +66,6 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
       width: radius,
     };
   }
-
-  // protected override makeNotch(): Notch {
-  //   return {
-  //     pathLeft: '',
-  //     pathRight: '',
-  //     width: 0,
-  //     type: 0,
-  //     height: 0,
-  //   };
-  // }
 }
 
 // For Reeference: https://github.com/google/blockly/blob/develop/core/renderers/common/info.ts
@@ -97,7 +87,7 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
         row.elements.push(
           new Blockly.blockRendering.InRowSpacer(
             this.constants_,
-            this.getInRowSpacing_(null, oldElems[0]) + 8
+            this.getInRowSpacing_(null, oldElems[0]) + 5
           )
         );
       }
@@ -108,7 +98,7 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
         row.elements.push(oldElems[e]);
         const spacing =
           this.getInRowSpacing_(oldElems[e], oldElems[e + 1]) +
-          (row instanceof Blockly.blockRendering.BottomRow ? 0 : 8);
+          (row instanceof Blockly.blockRendering.BottomRow ? 0 : 4);
         row.elements.push(
           new Blockly.blockRendering.InRowSpacer(this.constants_, spacing)
         );
@@ -128,7 +118,7 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
 
   override measure() {
     super.measure();
-    if (this.block.type == 'activity_criteria') return;
+    if (this.rows.length <= 5) return;
 
     // Logic to trim extra edges from the last row
     let rowWidth = 0;
@@ -161,12 +151,16 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
     _prev: Blockly.blockRendering.Row,
     _next: Blockly.blockRendering.Row
   ): number {
-    console.log('_prev', _prev);
-    console.log('_next', _next);
-
-    // if (this.block.type == 'activity_criteria') return 0;
-    if (_prev instanceof Blockly.blockRendering.TopRow) return 0;
-    if (_prev instanceof Blockly.blockRendering.TopRow) return 0;
+    if (
+      _prev instanceof Blockly.blockRendering.TopRow ||
+      ['activity_criteria', 'if_generic_adaptive'].includes(this.block.type)
+    )
+      return 0;
+    if (
+      _next instanceof Blockly.blockRendering.InputRow &&
+      _prev instanceof Blockly.blockRendering.InputRow
+    )
+      return 4;
     return this.constants_.MEDIUM_PADDING;
   }
 }
