@@ -1,3 +1,4 @@
+import { MyCustomTextField } from '../../fields/typeahead.field';
 import { CustomBlock } from '../../ngx-blockly/models/custom-block';
 
 import * as Blockly from 'blockly/core';
@@ -8,14 +9,23 @@ export class FilterBlock extends CustomBlock {
     this.class = FilterBlock;
   }
   override defineBlock() {
-    const lhs_dropdown = new Blockly.FieldDropdown([
-      ['--', ''],
-      ['BIT', 'activity'],
-      ['Member', 'member'],
-      ['Sponsor', 'sponsor'],
-      ['Location', 'location'],
-      ['Airport', 'airport'],
-    ]);
+    // Blockly.FIeld
+    let lhs_dropdown = new MyCustomTextField(
+      [
+        ['--', ''],
+        ['BIT', 'activity'],
+        ['Member', 'member'],
+        ['Sponsor', 'sponsor'],
+        ['Location', 'location'],
+        ['Airport', 'airport'],
+      ],
+      (x) => {
+        return x;
+      },
+      {
+        tooltip: 'Select the left-hand side of the filter',
+      }
+    );
 
     this.block
       .appendDummyInput()

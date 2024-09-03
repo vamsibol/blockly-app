@@ -16,6 +16,7 @@ import { createPlayground } from '@blockly/dev-tools';
 import { NgxBlocklyComponent } from './gravty-blockly/ngx-blockly/ngx-blockly.component';
 import { RuleBlock } from './gravty-blockly/blocks/rule-level/rule.block';
 import { FilterBlock } from './gravty-blockly/blocks/offer-level';
+import { MyCustomTextField } from './gravty-blockly/fields/typeahead.field';
 
 @Component({
   selector: 'app-root',
@@ -71,6 +72,7 @@ export class AppComponent {
     ];
     this.config.toolbox = toolbox.toXML();
     this.config.renderer = 'custom_renderer';
+    Blockly.fieldRegistry.register('my_custom_text_field', MyCustomTextField);
 
     NgxBlocklyComponent.initCustomBlocks([
       ...this.offerLevelBlocks,
