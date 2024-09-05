@@ -7,6 +7,7 @@ export class MyCustomTextField extends Blockly.FieldDropdown {
   searchKey: string = '';
   override showEditor() {
     super.showEditor_();
+    this.searchKey = '';
     const editor = document.createElement('div');
     editor.style.display = 'flex';
     editor.style.flexDirection = 'column';
@@ -54,6 +55,7 @@ export class MyCustomTextField extends Blockly.FieldDropdown {
   }
 
   hide_() {
+    this.searchKey = '';
     Blockly.WidgetDiv.hide();
     Blockly.DropDownDiv.hideWithoutAnimation();
   }
