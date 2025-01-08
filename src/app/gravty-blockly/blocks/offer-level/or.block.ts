@@ -1,4 +1,5 @@
 import { CustomBlock } from '../../ngx-blockly/models/custom-block';
+import * as Blockly from 'blockly/core';
 
 export class OrBlock extends CustomBlock {
   constructor() {
@@ -6,18 +7,22 @@ export class OrBlock extends CustomBlock {
     this.class = OrBlock;
   }
   override defineBlock() {
-    this.block.appendDummyInput().appendField('OR');
     this.block
-      .appendStatementInput('OPERAND1')
-      .setCheck(['If', 'Filter', 'OR'])
-      .appendField(' ');
+      .appendDummyInput()
+      .appendField('Rule')
+      .appendField(new Blockly.FieldTextInput('tag'), 'IDENTIFIER');
     this.block
-      .appendStatementInput('OPERAND2')
-      .setCheck(['If', 'Filter', 'OR'])
-      .appendField(' ');
-    this.block.setPreviousStatement(true, ['OR', 'If']);
-    this.block.setNextStatement(true, ['OR', 'If']);
-    this.block.setColour('#9E2B56');
+      .appendStatementInput('CONDITION')
+      .setCheck(null)
+      .appendField('C');
+    this.block
+      .appendValueInput('REDEEM_ACTION')
+      .appendField('Redeem ' + 0 + ' ' + 100)
+      .appendField(new Blockly.FieldDropdown([['--', '']]), 'operator');
+
+    this.block.setPreviousStatement(true);
+    this.block.setNextStatement(true);
+    this.block.setColour('#8a69c8');
     this.block.setTooltip('');
     this.block.setHelpUrl('');
   }

@@ -29,7 +29,11 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
     this.NOTCH_HEIGHT = 0;
     this.NOTCH_OFFSET_LEFT = 7;
     this.MEDIUM_PADDING = 8;
-    this.BOTTOM_ROW_AFTER_STATEMENT_MIN_HEIGHT = 0;
+    this.BOTTOM_ROW_AFTER_STATEMENT_MIN_HEIGHT = 10;
+    this.TAB_OFFSET_FROM_TOP = 0;
+    this.TAB_HEIGHT = 9;
+    this.TAB_WIDTH = 10;
+    this.EMPTY_INLINE_INPUT_PADDING = 20;
   }
   override makeOutsideCorners(): OutsideCorners {
     const topLeft =
@@ -64,6 +68,15 @@ class CustomConstantProvider extends Blockly.blockRendering.ConstantProvider {
       pathBottom,
       height: 2,
       width: radius,
+    };
+  }
+
+  protected override makePuzzleTab(): Blockly.blockRendering.PuzzleTab {
+    const puzzleTab = super.makePuzzleTab();
+    return {
+      ...puzzleTab,
+      pathDown: `h -${puzzleTab.width} l ${puzzleTab.width},${puzzleTab.height}`,
+      pathUp: `L -${puzzleTab.width / 2},0 `,
     };
   }
 }
@@ -109,7 +122,7 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
         row.elements.push(
           new Blockly.blockRendering.InRowSpacer(
             this.constants_,
-            this.getInRowSpacing_(oldElems[oldElems.length - 1], null) + 16
+            this.getInRowSpacing_(oldElems[oldElems.length - 1], null) + 10
           )
         );
       }
@@ -118,16 +131,35 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
 
   override measure() {
     super.measure();
+    if (this.block.type == 'arithmetic_generic') {
+      console.log(this.constants_.PUZZLE_TAB);
+    }
     if (this.rows.length <= 5) return;
 
     // Logic to trim extra edges from the last row
     let rowWidth = 0;
-    for (let i = 0; i < this.rows.length; i++) {
-      const row = this.rows[i];
+    for (let row of this.rows) {
       if (row instanceof Blockly.blockRendering.InputRow) {
         const extraWidth = row.elements[row.elements.length - 1].width;
         row.width -= extraWidth;
         rowWidth = row.width;
+      }
+
+      // To handle the content vertical alignment in the rule_award block's last row
+      if (
+        this.block.type == 'rule_award' &&
+        row instanceof Blockly.blockRendering.InputRow &&
+        row.elements.filter(
+          (element) =>
+            element instanceof Blockly.blockRendering.Field ||
+            element instanceof Blockly.blockRendering.ExternalValueInput
+        ).length > 2
+      ) {
+        row.elements
+          .filter((element) => element instanceof Blockly.blockRendering.Field)
+          .forEach((element) => {
+            element.centerline += 3;
+          });
       }
 
       if (row instanceof Blockly.blockRendering.BottomRow) {
@@ -143,6 +175,11 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
           element.width = 0;
         });
         row.elements[row.elements.length - 2].width = computedWidth;
+        if (this.block.type == 'or') {
+          row.elements[row.elements.length - 2].width = computedWidth + 12;
+          row.widthWithConnectedBlocks = row.widthWithConnectedBlocks - 12;
+          // row.elements[row.elements.length - 2].height = computedWidth - 8;
+        }
       }
     }
   }
@@ -153,9 +190,14 @@ class CustomRenderInfo extends Blockly.blockRendering.RenderInfo {
   ): number {
     if (
       _prev instanceof Blockly.blockRendering.TopRow ||
-      ['activity_criteria', 'if_generic_adaptive'].includes(this.block.type)
-    )
+      _next instanceof Blockly.blockRendering.BottomRow ||
+      this.block.isCollapsed()
+    ) {
+      if (this.block.type == 'rule_award') {
+        return 3;
+      }
       return 0;
+    }
     if (
       _next instanceof Blockly.blockRendering.InputRow &&
       _prev instanceof Blockly.blockRendering.InputRow
